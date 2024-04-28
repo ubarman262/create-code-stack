@@ -1,10 +1,10 @@
-# Create Code Stack (0.0.1-Alpha)
+# Code Stack (0.0.1-Alpha)
 
-Welcome to Create Code Stack! This project aims to generate boilerplate and folder structures for full-stack, backend, or frontend applications using the npx CLI.
+Welcome to Code Stack! This project aims to generate boilerplate and folder structures for full-stack, backend, or frontend applications using the npx CLI.
 
 ## Description
 
-Create Code Stack is a command-line tool designed to quickly scaffold out the folder structure and boilerplate code for your full-stack, backend, or frontend projects. Whether you're starting a new project or adding new components to an existing one, Create Code Stack can help you get up and running in no time.
+Code Stack is a command-line tool designed to quickly scaffold out the folder structure and boilerplate code for your full-stack, backend, or frontend projects. Whether you're starting a new project or adding new components to an existing one, Code Stack can help you get up and running in no time.
 
 ## Features
 
@@ -14,7 +14,7 @@ Create Code Stack is a command-line tool designed to quickly scaffold out the fo
 
 ## Getting Started
 
-To get started with Create Code Stack, follow these steps:
+To get started with Code Stack, follow these steps:
 
 ### Prerequisites
 
