@@ -123,7 +123,7 @@ function successMessage(projectName, projectPath) {
   console.log(
     `Your project "${projectName}" has been created successfully at ${projectPath}`
   );
-  console.log("Done!");
+  console.log("Happy Coding!");
 }
 
 function vesionCheck() {
