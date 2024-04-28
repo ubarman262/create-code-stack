@@ -1,4 +1,4 @@
-# Create Code Stack
+# Create Code Stack (0.0.1-Alpha)
 
 Welcome to Create Code Stack! This project aims to generate boilerplate and folder structures for full-stack, backend, or frontend applications using the npx CLI.
 
