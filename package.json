@@ -1,5 +1,6 @@
 {
   "name": "create-code-stack",
+  "version": "1.0.1",
   "keywords": [
     "create-code-stack",
     "code stack",
@@ -25,7 +26,6 @@
     "directory": "."
   },
   "type": "module",
-  "version": "1.0.0",
   "main": "inquirer.js",
   "dependencies": {
     "directory-import": "^3.3.1",
