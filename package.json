@@ -1,7 +1,22 @@
 {
   "name": "create-code-stack",
+  "keywords": [
+    "boilerplate",
+    "react",
+    "vite",
+    "node",
+    "express",
+    "folder",
+    "structure",
+    "folder structure"
+  ],
   "bin": {
     "create-code-stack": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ubarman262/create-code-stack",
+    "directory": "."
   },
   "type": "module",
   "version": "1.0.0",
@@ -15,7 +30,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Ujjwal Barman",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "engines": {
+    "node": ">=14"
+  }
 }
