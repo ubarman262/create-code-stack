@@ -6,6 +6,9 @@ import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 import packages from "./packages/packages.js";
+import { viteReact } from "./options/vite.js";
+import { createReactApp } from "./options/cra.js";
+import appPrompts from "./prompts/prompts.js";
 
 async function init() {
   await figlet("Code Stack", function (err, data) {
@@ -17,116 +20,109 @@ async function init() {
     console.log(data);
   });
   let prompts = [];
-  let appName = process.argv[2];
+  let projectName = process.argv[2];
 
-  if (!/^([A-Za-z\-\\_\d])+$/.test(appName))
+  if (!/^([A-Za-z\-\\_\d])+$/.test(projectName))
     console.log(
       "Project name may only include letters, numbers, underscores and hashes."
     );
 
-  const appNamePrompt = {
-    type: "input",
-    name: "projectName",
-    default: "code-stack-app",
-    message: "Enter your project name:",
-    validate: (input) => {
-      if (/^([A-Za-z\-\\_\d])+$/.test(input)) return true;
-      return "Project name may only include letters, numbers, underscores and hashes.";
-    },
-  };
-
-  const stackPrompt = {
-    type: "list",
-    name: "stack",
-    message: "Choose your project stack:",
-    choices: ["Full-stack", "Backend", "Frontend"],
-  };
-
-  const templateChoicePrompt = {
-    type: "list",
-    name: "template",
-    message: "Choose your project template:",
-    choices: ["vite", "CRA (Create React App)"],
-  };
-
-  const dependenciesPrompt = {
-    type: "confirm",
-    name: "installDependencies",
-    message: "Do you want to install dependencies after project creation?",
-    default: true,
-  };
-
-  if (!checkString(appName)) {
-    prompts.push(appNamePrompt);
+  if (!checkString(projectName)) {
+    prompts.push(appPrompts.projectName);
   }
-  prompts.push(stackPrompt);
-  prompts.push(templateChoicePrompt);
-  prompts.push(dependenciesPrompt);
+  prompts.push(appPrompts.stack);
 
   const answers = await inquirer.prompt(prompts);
 
-  const projectPath = path.join(process.cwd(), answers.projectName || appName);
+  projectName = answers.projectName || projectName;
 
-  // Create directory
-  fs.mkdirSync(projectPath);
+  const projectPath = path.join(process.cwd(), projectName);
+  try {
+    // Create directory
+    fs.mkdirSync(projectPath);
 
-  switch (answers.stack) {
-    case "Full-stack":
-      // Create directory
-      fs.mkdirSync(projectPath + "/backend");
-      fs.mkdirSync(projectPath + "/frontend");
-      // copy backend directory
-      fs.cp(
-        packages.directory.nodeExpressDir(),
-        projectPath + "/backend",
-        { recursive: true },
-        (err) => {
-          if (err) {
-            console.error(err);
+    switch (answers.stack) {
+      case "Full-stack": {
+        fs.mkdirSync(projectPath + "/backend");
+        fs.mkdirSync(projectPath + "/frontend");
+        // copy backend directory
+        fs.cp(
+          packages.directory.nodeExpressDir(),
+          projectPath + "/backend",
+          { recursive: true },
+          (err) => {
+            if (err) {
+              console.error(err);
+            }
           }
-        }
-      );
-      break;
-    case "Backend":
-      console.log("backend");
-      break;
-    case "Frontend":
-      console.log("frontend");
-      break;
+        );
+        await frontendFLow(projectPath + "/frontend", projectName + "-ui");
+        await installDependencies(projectPath, answers.stack);
+        break;
+      }
+      case "Backend":
+        console.log("backend");
+        break;
+      case "Frontend": {
+        await frontendFLow(projectPath, projectName);
+        await installDependencies(projectPath);
+        break;
+      }
+    }
+    successMessage(projectName, projectPath);
+  } catch (error) {
+    fs.rmdirSync(projectPath, { recursive: true });
+    if (error.message.includes("file already exists"))
+      console.log("Folder is already present");
+    console.error(error);
+    process.exit(1);
   }
+}
 
-  // Create package.json based on the selected template
-  let packageJson;
+async function frontendFLow(projectPath, projectName) {
+  const answers = await inquirer.prompt(appPrompts.frontendTemplate);
+
   switch (answers.template) {
     case "vite":
-      packageJson = packages.viteReactPackage();
+      viteReact(projectPath, projectName);
       break;
     case "CRA (Create React App)":
-      packageJson = packages.createReactAppPackage();
+      createReactApp(projectPath, projectName);
       break;
     default:
       console.error("Invalid template choice");
       return;
   }
-  packageJson.name = answers.projectName || appName;
+}
 
-  fs.writeFileSync(
-    path.join(projectPath, "package.json"),
-    JSON.stringify(packageJson, null, 2)
-  );
-
-  console.log(
-    `Your project "${
-      answers.projectName || appName
-    }" has been created successfully at ${projectPath}`
-  );
-
-  // Optionally, you can install dependencies
+async function installDependencies(projectPath, stack) {
+  const answers = await inquirer.prompt(appPrompts.installDependencies);
   if (answers.installDependencies) {
-    console.log(`Installing dependencies...`);
-    execSync(`cd ${projectPath} && npm install`, { stdio: "inherit" });
-  }
+    if (stack === "Full-stack") {
+      console.log(`Installing backend dependencies...`);
 
+      execSync(`cd ${projectPath}/backend && npm install`, {
+        stdio: "inherit",
+      });
+
+      console.log(`Installing frontend dependencies...`);
+
+      execSync(`cd ${projectPath}/frontend && npm install`, {
+        stdio: "inherit",
+      });
+    } else {
+      console.log(`Installing dependencies...`);
+      execSync(`cd ${projectPath} && npm install`, {
+        stdio: "inherit",
+      });
+    }
+  }
+}
+
+function successMessage(projectName, projectPath) {
+  console.log(
+    `Your project "${projectName}" has been created successfully at ${projectPath}`
+  );
   console.log("Done!");
 }
 
@@ -145,11 +141,11 @@ function vesionCheck() {
     );
     process.exit(1);
   }
-
   init();
 }
 
 function checkString(str) {
   return !(str === null || str === undefined || str === "");
 }
+
 vesionCheck();
