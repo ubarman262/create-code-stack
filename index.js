@@ -1,23 +1,22 @@
 #!/usr/bin/env node
 
-import inquirer from "inquirer";
+import { execSync } from "child_process";
 import figlet from "figlet";
 import fs from "fs";
+import inquirer from "inquirer";
 import path from "path";
-import { execSync } from "child_process";
-import packages from "./packages/packages.js";
-import { viteReact } from "./options/vite.js";
 import { createReactApp } from "./options/cra.js";
+import { express } from "./options/express.js";
+import { viteReact } from "./options/vite.js";
 import appPrompts from "./prompts/prompts.js";
+import { expressPrisma } from "./options/expressPrisma.js";
 
 async function init() {
   await figlet("Code Stack", function (err, data) {
     if (err) {
       console.log("Something went wrong...");
       console.dir(err);
-      return;
     }
-    console.log(data);
   });
   let prompts = [];
   let projectName = process.argv[2];
@@ -45,23 +44,13 @@ async function init() {
       case "Full-stack": {
         fs.mkdirSync(projectPath + "/backend");
         fs.mkdirSync(projectPath + "/frontend");
-        // copy backend directory
-        fs.cp(
-          packages.directory.nodeExpressDir(),
-          projectPath + "/backend",
-          { recursive: true },
-          (err) => {
-            if (err) {
-              console.error(err);
-            }
-          }
-        );
+        await backendFlow(projectPath + "/backend", projectName + "-api");
         await frontendFLow(projectPath + "/frontend", projectName + "-ui");
         await installDependencies(projectPath, answers.stack);
         break;
       }
       case "Backend":
-        console.log("backend");
+        await backendFlow(projectPath, projectName);
         break;
       case "Frontend": {
         await frontendFLow(projectPath, projectName);
@@ -76,6 +65,22 @@ async function init() {
       console.log("Folder is already present");
     console.error(error);
     process.exit(1);
+  }
+}
+
+async function backendFlow(projectPath, projectName) {
+  const answers = await inquirer.prompt(appPrompts.backendTemplate);
+
+  switch (answers.template) {
+    case "Express":
+      express(projectPath, projectName);
+      break;
+    case "Express + Prisma ORM":
+      expressPrisma(projectPath, projectName);
+      break;
+    default:
+      console.error("Invalid template choice");
+      return;
   }
 }
 

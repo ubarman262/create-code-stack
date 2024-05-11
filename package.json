@@ -1,9 +1,9 @@
 {
-  "name": "code-stack-app",
+  "name": "create-code-stack",
   "version": "0.0.1",
   "keywords": [
-    "code-stack-app",
-    "code stack app",
+    "create-code-stack",
+    "create code stack",
     "stack",
     "code stack",
     "create stack",
@@ -15,7 +15,8 @@
     "express",
     "folder",
     "structure",
-    "folder structure"
+    "folder structure",
+    "scaffold"
   ],
   "bin": {
     "create-code-stack": "./index.js"

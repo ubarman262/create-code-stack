@@ -15,6 +15,12 @@ const appPrompts = {
     message: "Choose your project stack:",
     choices: ["Full-stack", "Backend", "Frontend"],
   },
+  backendTemplate: {
+    type: "list",
+    name: "template",
+    message: "Choose your backend template:",
+    choices: ["Express", "Express + Prisma ORM"],
+  },
   frontendTemplate: {
     type: "list",
     name: "template",
