@@ -10,6 +10,7 @@ import { express } from "./options/express.js";
 import { viteReact } from "./options/vite.js";
 import appPrompts from "./prompts/prompts.js";
 import { expressPrisma } from "./options/expressPrisma.js";
+import { expressTypescript } from "./options/expressTypescript.js";
 
 async function init() {
   await figlet("Code Stack", function (err, data) {
@@ -51,6 +52,7 @@ async function init() {
       }
       case "Backend":
         await backendFlow(projectPath, projectName);
+        await installDependencies(projectPath);
         break;
       case "Frontend": {
         await frontendFLow(projectPath, projectName);
@@ -74,6 +76,9 @@ async function backendFlow(projectPath, projectName) {
   switch (answers.template) {
     case "Express":
       express(projectPath, projectName);
+      break;
+    case "Express + Typescript":
+      expressTypescript(projectPath, projectName);
       break;
     case "Express + Prisma ORM":
       expressPrisma(projectPath, projectName);

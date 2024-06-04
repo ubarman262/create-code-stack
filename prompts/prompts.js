@@ -19,7 +19,7 @@ const appPrompts = {
     type: "list",
     name: "template",
     message: "Choose your backend template:",
-    choices: ["Express", "Express + Prisma ORM"],
+    choices: ["Express", "Express + Typescript", "Express + Prisma ORM"],
   },
   frontendTemplate: {
     type: "list",
